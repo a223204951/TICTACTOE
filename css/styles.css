@@ -1,0 +1,5 @@
+input[type="button"] {
+    width: 200px; /* Tamaño del ancho del botón */
+    height: 100px; /* Tamaño de la altura del botón */
+    font-size: 20px; /* Tamaño de la fuente del texto */
+}
