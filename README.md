@@ -130,7 +130,7 @@ OPCIÓN A:
 4. ¡Jugar!
 
 OPCIÓN B:
-1. Ingresar a https://a223204951.github.io/8REINAS/
+1. Ingresar a https://a223204951.github.io/TICTACTOE/
 2. Configurar opciones de juego
 3. ¡Jugar!
 
