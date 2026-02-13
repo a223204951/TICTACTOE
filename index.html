@@ -1,31 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tic Tac Toe - lani ☆</title>
     <link rel="stylesheet" href="CSS/styles.css">
-    <script src="JS/functions.js"></script>
+    <script src="JS/functions.js" defer></script>
+    <link rel="shortcut icon" href="img/tictactoe.ico" />
 
 
 </head>
+
 <body>
-<table>
-    <tr>
-        <td><input type="button" onclick="activo(this)"></td>
-        <td><input type="button" onclick="activo(this)"></td>
-        <td><input type="button" onclick="activo(this)"></td>
-    </tr>
-    <tr>
-        <td><input type="button" onclick="activo(this)"></td>
-        <td><input type="button" onclick="activo(this)"></td>
-        <td><input type="button" onclick="activo(this)"></td>
-    </tr>
-    <tr>
-        <td><input type="button" onclick="activo(this)"></td>
-        <td><input type="button" onclick="activo(this)"></td>
-        <td><input type="button" onclick="activo(this)"></td>
-    </tr>
-</table>  
+    <div class="timer-container">
+        <p><strong>⏱️ Tiempo:</strong> <span id="timer">3:00</span></p>
+    </div>
+
+    <h1>₊ ‧ . ° . ⋆ TIC TAC TOE ⋆ . ° . ₊</h1>
+
+    <div class="container">
+
+        <!-- Panel de opciones -->
+        <div class="panel">
+            <!-- Columna 1 -->
+            <div class="panel-column">
+                <p><strong>☆ SELECCIONA TUS SÍMBOLOS</strong></p>
+
+                <label>
+                    <input type="radio" name="imageSet" value="1" checked onchange="cambiarImagenes(1)">
+                    Set 1: X y O
+                </label>
+
+                <label>
+                    <input type="radio" name="imageSet" value="2" onchange="cambiarImagenes(2)">
+                    Set 2: ★ y ☆
+                </label>
+
+                <label>
+                    <input type="radio" name="imageSet" value="3" onchange="cambiarImagenes(3)">
+                    Set 3: 🍒 y 🍰
+                </label>
+
+                <br>
+                <p><strong>☆ COLORES DE CELDAS</strong></p>
+                <p>Color de celda 1:</p>
+                <input type="color" id="colorCelda1" value="#ffe8ed" onchange="actualizarColoresCeldas()">
+                <p>Color de celda 2:</p>
+                <input type="color" id="colorCelda2" value="#fff5f7" onchange="actualizarColoresCeldas()">
+            </div>
+
+            <!-- Columna 2 -->
+            <div class="panel-column">
+                <p><strong>☆ LÍNEAS INTERMEDIAS</strong></p>
+                <label>
+                    <input type="checkbox" id="mostrarLineas" checked onchange="toggleLineas()">
+                    Mostrar líneas
+                </label>
+
+                <br>
+                <p><strong>☆ COLOR LÍNEA GANADORA</strong></p>
+                <input type="color" id="colorLineaGanadora" value="#ff1493">
+
+                <br>
+                <button onclick="reiniciarJuego()">★ Reiniciar Juego ★</button>
+            </div>
+        </div>
+
+        <!-- Tablero -->
+        <div class="board-container">
+            <table class="tablero">
+                <tr>
+                    <td onclick="cellClick(this, 0)"></td>
+                    <td onclick="cellClick(this, 1)"></td>
+                    <td onclick="cellClick(this, 2)"></td>
+                </tr>
+                <tr>
+                    <td onclick="cellClick(this, 3)"></td>
+                    <td onclick="cellClick(this, 4)"></td>
+                    <td onclick="cellClick(this, 5)"></td>
+                </tr>
+                <tr>
+                    <td onclick="cellClick(this, 6)"></td>
+                    <td onclick="cellClick(this, 7)"></td>
+                    <td onclick="cellClick(this, 8)"></td>
+                </tr>
+            </table>
+            <canvas id="lineCanvas" class="line-canvas"></canvas>
+        </div>
+
+    </div>
+
+    <!-- Modal de Ganador -->
+    <div id="modal-ganador" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="mensaje-ganador">¡Ganador! :3</h2>
+            <div class="modal-buttons">
+                <button onclick="cerrarModal()">Cerrar</button>
+                <button onclick="reiniciarDesdeModal()">★ Reiniciar Juego ★</button>
+            </div>
+        </div>
+    </div>
+
 </body>
+
 </html>

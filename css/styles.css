@@ -1,5 +1,519 @@
-input[type="button"] {
-    width: 200px; /* Ajusta el tamaño del ancho del botón */
-    height: 200px; /* Ajusta el tamaño del alto del botón */
-    font-size: 75px; /* Ajusta el tamaño de la fuente */
+/* ═══════════════════════════════════════════════════════
+   ESTILOS GENERALES DEL BODY
+   ═══════════════════════════════════════════════════════ */
+
+/* Establece margen cero para eliminar espacios predeterminados del navegador */
+body {
+    margin: 0;
+    /* Altura mínima del viewport para ocupar toda la pantalla */
+    min-height: 100vh;
+    /* Flexbox para centrar contenido vertical y horizontalmente */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* Color de fondo rosa claro suave */
+    background-color: rgb(255, 240, 242);
+    /* Padding para evitar que el contenido toque los bordes */
+    padding: 15px 10px;
+    /* Box-sizing para incluir padding en el cálculo del ancho/alto */
+    box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TÍTULO PRINCIPAL
+   ═══════════════════════════════════════════════════════ */
+
+/* Estilos del encabezado principal */
+h1 {
+    /* Margen inferior para separar del contenido siguiente */
+    margin: 0 0 20px 0;
+    /* Color rosa intenso para el texto */
+    color: #d63384;
+    /* Fuente sans-serif para legibilidad */
+    font-family: 'Arial', sans-serif;
+    /* Tamaño de fuente grande para destacar */
+    font-size: 28px;
+    /* Grosor de fuente bold */
+    font-weight: 700;
+    /* Alineación centrada */
+    text-align: center;
+    /* Sombra de texto rosa suave para efecto de profundidad */
+    text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.2);
+    /* Espaciado entre letras para elegancia */
+    letter-spacing: 1px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CONTENEDOR DEL TEMPORIZADOR
+   ═══════════════════════════════════════════════════════ */
+
+/* Contenedor del cronómetro */
+.timer-container {
+    /* Posicionamiento absoluto en la esquina superior derecha */
+    position: right
+    top: 20px;
+    left: 20px;
+    /* Fondo degradado rosa claro */
+    background: linear-gradient(135deg, #fff5f7 0%, #ffe8ed 100%);
+    /* Padding interno para espaciado */
+    padding: 12px 25px;
+    /* Bordes redondeados suaves */
+    border-radius: 15px;
+    /* Sombra de caja rosa suave */
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.15);
+    /* Borde rosa translúcido */
+    border: 2px solid rgba(255, 182, 193, 0.3);
+    /* Fuente sans-serif */
+    font-family: 'Arial', sans-serif;
+    /* Color de texto rosa */
+    color: #d63384;
+    /* Grosor de fuente semi-bold */
+    font-weight: 600;
+    /* Tamaño de fuente mediano */
+    font-size: 16px;
+    /* Z-index para estar sobre otros elementos */
+    z-index: 100;
+}
+
+/* Estilos del texto del temporizador */
+.timer-container p {
+    /* Sin margen */
+    margin: 0;
+}
+
+/* Estilos del número del temporizador */
+.timer-container span {
+    /* Grosor de fuente bold */
+    font-weight: 700;
+    /* Tamaño de fuente más grande */
+    font-size: 18px;
+    /* Color rosa intenso */
+    color: #ff1493;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CONTENEDOR PRINCIPAL
+   ═══════════════════════════════════════════════════════ */
+
+/* Contenedor flex principal que contiene panel y tablero */
+.container {
+    /* Disposición flex horizontal */
+    display: flex;
+    /* Espaciado entre elementos hijos */
+    gap: 40px;
+    /* Ancho máximo para no exceder en pantallas grandes */
+    max-width: 900px;
+    /* Ancho del 85% del viewport */
+    width: 85%;
+    /* Centrar contenido horizontalmente */
+    justify-content: center;
+    /* Alineación centrada vertical */
+    align-items: flex-start;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PANEL DE OPCIONES LATERAL
+   ═══════════════════════════════════════════════════════ */
+
+/* Panel de controles izquierdo */
+.panel {
+    /* Disposición grid de 2 columnas */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Espaciado entre columnas */
+    gap: 20px;
+    /* Fuente sans-serif */
+    font-family: 'Arial', sans-serif;
+    /* Fondo degradado rosa claro */
+    background: linear-gradient(135deg, #fff5f7 0%, #ffe8ed 100%);
+    /* Padding interno */
+    padding: 18px;
+    /* Bordes redondeados */
+    border-radius: 15px;
+    /* Sombra de caja rosa suave */
+    box-shadow: 0 6px 15px rgba(255, 105, 180, 0.15);
+    /* Borde rosa translúcido */
+    border: 2px solid rgba(255, 182, 193, 0.3);
+    /* Altura ajustada al contenido */
+    height: fit-content;
+}
+
+/* Columnas individuales del panel */
+.panel-column {
+    /* Disposición vertical de elementos */
+    display: flex;
+    flex-direction: column;
+    /* Espaciado entre elementos internos */
+    gap: 12px;
+}
+
+/* Párrafos dentro del panel */
+.panel p {
+    /* Margen inferior pequeño */
+    margin: 0 0 5px 0;
+    /* Color rosa intenso */
+    color: #d63384;
+    /* Grosor de fuente semi-bold */
+    font-weight: 600;
+    /* Tamaño de fuente pequeño */
+    font-size: 12px;
+    /* Espaciado entre letras */
+    letter-spacing: 0.3px;
+}
+
+/* Labels para radio buttons y checkboxes */
+.panel label {
+    /* Disposición flex para alinear elementos */
+    display: flex;
+    align-items: center;
+    /* Tamaño de fuente pequeño */
+    font-size: 11px;
+    /* Espaciado entre checkbox/radio y texto */
+    gap: 6px;
+    /* Padding interno */
+    padding: 6px 10px;
+    /* Fondo blanco */
+    background-color: white;
+    /* Bordes redondeados */
+    border-radius: 8px;
+    /* Cursor pointer para indicar interactividad */
+    cursor: pointer;
+    /* Transición suave en hover */
+    transition: all 0.3s ease;
+    /* Color de texto gris */
+    color: #666;
+}
+
+/* Efecto hover en labels */
+.panel label:hover {
+    /* Cambio de color de fondo en hover */
+    background-color: #fff0f5;
+    /* Desplazamiento horizontal en hover */
+    transform: translateX(3px);
+}
+
+/* Radio buttons dentro del panel */
+.panel input[type="radio"] {
+    /* Color de acento rosa */
+    accent-color: #ff69b4;
+    /* Cursor pointer */
+    cursor: pointer;
+    /* Ancho del radio button */
+    width: 14px;
+    /* Alto del radio button */
+    height: 14px;
+}
+
+/* Checkboxes dentro del panel */
+.panel input[type="checkbox"] {
+    /* Color de acento rosa */
+    accent-color: #ff69b4;
+    /* Cursor pointer */
+    cursor: pointer;
+    /* Ancho del checkbox */
+    width: 14px;
+    /* Alto del checkbox */
+    height: 14px;
+}
+
+/* Color pickers dentro del panel */
+.panel input[type="color"] {
+    /* Ancho completo del contenedor */
+    width: 100%;
+    /* Altura del selector */
+    height: 30px;
+    /* Borde rosa claro */
+    border: 2px solid #ffb6c1;
+    /* Bordes redondeados */
+    border-radius: 8px;
+    /* Cursor pointer */
+    cursor: pointer;
+    /* Transición suave en hover */
+    transition: transform 0.2s ease;
+}
+
+/* Efecto hover en color pickers */
+.panel input[type="color"]:hover {
+    /* Escala ligeramente mayor en hover */
+    transform: scale(1.05);
+}
+
+/* Ocultar elementos br dentro del panel */
+.panel > br {
+    display: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CONTENEDOR DEL TABLERO
+   ═══════════════════════════════════════════════════════ */
+
+/* Contenedor del tablero y canvas de línea */
+.board-container {
+    /* Posicionamiento relativo para canvas absoluto */
+    position: relative;
+    /* Inline-block para ajustar al contenido */
+    display: inline-block;
+}
+
+/* ═══════════════════════════════════════════════════════
+   TABLERO DE JUEGO
+   ═══════════════════════════════════════════════════════ */
+
+/* Tabla del tablero de Tic Tac Toe */
+.tablero {
+    /* Colapsar bordes para evitar espacios dobles */
+    border-collapse: collapse;
+    /* Sombra de caja sutil */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    /* Bordes redondeados */
+    border-radius: 8px;
+    /* Ocultar contenido que exceda los bordes redondeados */
+    overflow: hidden;
+    /* Fondo blanco */
+    background-color: white;
+    /* Posicionamiento relativo */
+    position: relative;
+    /* Z-index para estar debajo del canvas */
+    z-index: 1;
+}
+
+/* Celdas del tablero */
+.tablero td {
+    /* Ancho de celda */
+    width: 100px;
+    /* Alto de celda */
+    height: 100px;
+    /* Borde rosa claro */
+    border: 3px solid pink;
+    /* Cursor pointer para indicar clickeable */
+    cursor: pointer;
+    /* Tamaño de fuente grande para símbolos */
+    font-size: 60px;
+    /* Alineación centrada del texto */
+    text-align: center;
+    /* Alineación vertical centrada */
+    vertical-align: middle;
+    /* Posicionamiento relativo para pseudo-elementos */
+    position: relative;
+    /* Transición suave en hover */
+    transition: all 0.2s ease;
+    /* Grosor de fuente bold */
+    font-weight: bold;
+}
+
+/* Colores alternados de celdas - celda 1 */
+.tablero td:nth-child(odd) {
+    background-color: #ffe8ed;
+}
+
+/* Colores alternados de celdas - celda 2 */
+.tablero td:nth-child(even) {
+    background-color: #fff5f7;
+}
+
+/* Efecto hover en celdas vacías */
+.tablero td:not(.ocupada):hover {
+    /* Reducir opacidad */
+    opacity: 0.8;
+    /* Escalar ligeramente */
+    transform: scale(1.05);
+}
+
+/* Estilo para celdas ocupadas */
+.tablero td.ocupada {
+    /* Cursor no permitido */
+    cursor: not-allowed;
+}
+
+/* Clase para ocultar bordes cuando se desactivan líneas */
+.tablero.sin-lineas td {
+    border: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CANVAS PARA LÍNEA GANADORA
+   ═══════════════════════════════════════════════════════ */
+
+/* Canvas para dibujar la línea ganadora */
+.line-canvas {
+    /* Posicionamiento absoluto sobre el tablero */
+    position: absolute;
+    /* Alineado arriba */
+    top: 0;
+    /* Alineado izquierda */
+    left: 0;
+    /* Z-index alto para estar sobre el tablero */
+    z-index: 10;
+    /* Eventos pointer no afectan al canvas */
+    pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   BOTONES
+   ═══════════════════════════════════════════════════════ */
+
+/* Estilo para todos los botones */
+button {
+    /* Padding interno */
+    padding: 8px 14px;
+    /* Tamaño de fuente */
+    font-size: 11px;
+    /* Fondo degradado rosa */
+    background: linear-gradient(90deg, #ff69b4 0%, #ff1493 50%, #ff69b4 100%);
+    /* Color de texto blanco */
+    color: white;
+    /* Sin borde */
+    border: none;
+    /* Bordes redondeados */
+    border-radius: 8px;
+    /* Cursor pointer */
+    cursor: pointer;
+    /* Grosor de fuente semi-bold */
+    font-weight: 600;
+    /* Transición suave */
+    transition: all 0.3s ease;
+    /* Sombra de caja rosa */
+    box-shadow: 0 3px 8px rgba(255, 105, 180, 0.3);
+}
+
+/* Efecto hover en botones */
+button:hover {
+    /* Desplazamiento hacia arriba */
+    transform: translateY(-2px);
+    /* Sombra más pronunciada */
+    box-shadow: 0 5px 12px rgba(255, 105, 180, 0.4);
+}
+
+/* Efecto active (click) en botones */
+button:active {
+    /* Retornar posición original */
+    transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════
+   MODAL DE GANADOR
+   ═══════════════════════════════════════════════════════ */
+
+/* Overlay de fondo difuminado del modal */
+.modal-overlay {
+    /* Posicionamiento fijo para cubrir toda la pantalla */
+    position: fixed;
+    /* Cubrir desde arriba */
+    top: 0;
+    /* Cubrir desde la izquierda */
+    left: 0;
+    /* Ancho completo */
+    width: 100%;
+    /* Alto completo */
+    height: 100%;
+    /* Fondo negro semi-transparente */
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Efecto de difuminado en el fondo */
+    backdrop-filter: blur(5px);
+    /* Z-index alto para estar sobre todo */
+    z-index: 1000;
+    /* Centrar contenido con flexbox */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Inicialmente oculto */
+    opacity: 0;
+    visibility: hidden;
+    /* Transición suave al aparecer */
+    transition: all 0.3s ease;
+}
+
+/* Modal visible */
+.modal-overlay.mostrar {
+    /* Totalmente opaco */
+    opacity: 1;
+    /* Visible */
+    visibility: visible;
+}
+
+/* Contenido del modal */
+.modal-content {
+    /* Fondo degradado rosa claro */
+    background: linear-gradient(135deg, #fff5f7 0%, #ffe8ed 100%);
+    /* Padding interno generoso */
+    padding: 40px 50px;
+    /* Bordes muy redondeados */
+    border-radius: 25px;
+    /* Sombra de caja grande */
+    box-shadow: 0 10px 40px rgba(255, 105, 180, 0.3);
+    /* Borde rosa */
+    border: 3px solid rgba(255, 182, 193, 0.5);
+    /* Alineación centrada del texto */
+    text-align: center;
+    /* Ancho máximo */
+    max-width: 400px;
+    /* Escala inicial pequeña para animación */
+    transform: scale(0.8);
+    /* Transición suave */
+    transition: transform 0.3s ease;
+}
+
+/* Contenido del modal cuando está visible */
+.modal-overlay.mostrar .modal-content {
+    /* Escala normal */
+    transform: scale(1);
+}
+
+/* Título del mensaje de ganador */
+.modal-content h2 {
+    /* Sin margen superior */
+    margin: 0 0 25px 0;
+    /* Tamaño de fuente muy grande */
+    font-size: 32px;
+    /* Grosor de fuente bold */
+    font-weight: bold;
+    /* Color rosa intenso */
+    color: #ff1493;
+    /* Fuente sans-serif */
+    font-family: 'Arial', sans-serif;
+    /* Sombra de texto rosa */
+    text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.3);
+}
+
+/* Contenedor de botones del modal */
+.modal-buttons {
+    /* Disposición flex horizontal */
+    display: flex;
+    /* Espaciado entre botones */
+    gap: 15px;
+    /* Centrar botones */
+    justify-content: center;
+    /* Margen superior */
+    margin-top: 20px;
+}
+
+/* Botones dentro del modal */
+.modal-buttons button {
+    /* Padding más grande */
+    padding: 12px 24px;
+    /* Tamaño de fuente más grande */
+    font-size: 14px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ANIMACIÓN DE GANADOR
+   ═══════════════════════════════════════════════════════ */
+
+/* Animación de celebración para el modal de ganador */
+@keyframes celebration {
+    0%, 100% {
+        /* Escala normal */
+        transform: scale(1);
+    }
+    50% {
+        /* Escala aumentada */
+        transform: scale(1.05);
+    }
+}
+
+/* Aplicar animación cuando se muestra el modal */
+.modal-overlay.mostrar .modal-content {
+    /* Animación de celebración */
+    animation: celebration 0.6s ease-in-out 2;
 }
