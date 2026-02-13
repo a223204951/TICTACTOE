@@ -6,10 +6,28 @@ var turno = false; // false = jugador 1, true = jugador 2
 var tablero = ['', '', '', '', '', '', '', '', '']; // Estado del tablero
 var juegoActivo = true; // Controla si el juego está activo
 var tiempoInicio = null; // Momento en que inició el juego
-var tiempoLimite = 180; // 3 minutos en segundos
+var tiempoLimite = 180; // 3 minutos en segundos (por defecto)
 var intervaloTimer = null; // Intervalo del temporizador
-var tiempoRestante = 180; // Tiempo restante en segundos (regresivo)
+var tiempoRestante = 180; // Tiempo restante en segundos (contador regresivo)
 var setImagenes = 1; // Set de imágenes actual (1, 2 o 3)
+var modoJuego = '2jugadores'; // Modo de juego: '2jugadores' o 'vsComputadora'
+
+// Nombres de jugadores
+var nombreJugador1 = 'Jugador 1';
+var nombreJugador2 = 'Jugador 2';
+
+// Estadísticas de victorias
+var estadisticas = {
+    victoriasJ1: 0,
+    victoriasJ2: 0,
+    empates: 0
+};
+
+// Valores por defecto para reset
+var COLORES_DEFAULT = {
+    celda1: '#ffe8ed',
+    celda2: '#fff5f7'
+};
 
 // Símbolos para cada set de imágenes
 var simbolos = {
@@ -29,7 +47,7 @@ function cellClick(celda, indice) {
     }
 
     // Si es el primer movimiento, iniciar el temporizador
-    if (tiempoInicio === null) {
+    if (tiempoInicio === null && tiempoLimite > 0) {
         iniciarTemporizador();
     }
 
@@ -47,7 +65,94 @@ function cellClick(celda, indice) {
     turno = !turno;
 
     // Verificar si hay ganador
-    verificarGanador();
+    var resultado = verificarGanador();
+    
+    // Si es modo vs computadora y es turno de la computadora
+    if (!resultado && modoJuego === 'vsComputadora' && turno && juegoActivo) {
+        // Esperar un poco antes de que la computadora juegue
+        setTimeout(function() {
+            jugarComputadora();
+        }, 500);
+    }
+}
+
+// ═══════════════════════════════════════════════════════
+// FUNCIÓN PARA LA IA DE LA COMPUTADORA
+// ═══════════════════════════════════════════════════════
+
+function jugarComputadora() {
+    if (!juegoActivo) return;
+    
+    // Estrategia simple: intentar ganar, bloquear, o jugar aleatorio
+    var movimiento = encontrarMejorMovimiento();
+    
+    if (movimiento !== -1) {
+        var celdas = document.querySelectorAll('.tablero td');
+        cellClick(celdas[movimiento], movimiento);
+    }
+}
+
+function encontrarMejorMovimiento() {
+    var simboloIA = simbolos[setImagenes].jugador2;
+    var simboloHumano = simbolos[setImagenes].jugador1;
+    
+    // 1. Intentar ganar
+    var movimientoGanador = buscarMovimientoGanador(simboloIA);
+    if (movimientoGanador !== -1) return movimientoGanador;
+    
+    // 2. Bloquear al oponente
+    var movimientoBloqueo = buscarMovimientoGanador(simboloHumano);
+    if (movimientoBloqueo !== -1) return movimientoBloqueo;
+    
+    // 3. Tomar el centro si está disponible
+    if (tablero[4] === '') return 4;
+    
+    // 4. Tomar una esquina disponible
+    var esquinas = [0, 2, 6, 8];
+    for (var i = 0; i < esquinas.length; i++) {
+        if (tablero[esquinas[i]] === '') return esquinas[i];
+    }
+    
+    // 5. Tomar cualquier espacio disponible
+    for (var j = 0; j < tablero.length; j++) {
+        if (tablero[j] === '') return j;
+    }
+    
+    return -1;
+}
+
+function buscarMovimientoGanador(simbolo) {
+    var combinacionesGanadoras = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Filas
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columnas
+        [0, 4, 8], [2, 4, 6]  // Diagonales
+    ];
+    
+    for (var i = 0; i < combinacionesGanadoras.length; i++) {
+        var combo = combinacionesGanadoras[i];
+        var valores = [tablero[combo[0]], tablero[combo[1]], tablero[combo[2]]];
+        
+        // Contar cuántas veces aparece el símbolo y cuántos espacios vacíos
+        var conteoSimbolo = 0;
+        var conteoVacio = 0;
+        var indiceVacio = -1;
+        
+        for (var j = 0; j < 3; j++) {
+            if (valores[j] === simbolo) {
+                conteoSimbolo++;
+            } else if (valores[j] === '') {
+                conteoVacio++;
+                indiceVacio = combo[j];
+            }
+        }
+        
+        // Si hay 2 del mismo símbolo y 1 vacío, ese es el movimiento ganador/bloqueador
+        if (conteoSimbolo === 2 && conteoVacio === 1) {
+            return indiceVacio;
+        }
+    }
+    
+    return -1;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -81,7 +186,7 @@ function verificarGanador() {
             
             // Hay ganador
             finalizarJuego(tablero[pos1], combo);
-            return;
+            return true;
         }
     }
 
@@ -96,7 +201,10 @@ function verificarGanador() {
 
     if (hayEmpate) {
         finalizarJuego(null, null);
+        return true;
     }
+    
+    return false;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -107,12 +215,25 @@ function finalizarJuego(ganador, combinacionGanadora) {
     juegoActivo = false;
     detenerTemporizador();
 
+    var mensajeTexto = document.getElementById('mensaje-ganador');
     var modal = document.getElementById('modal-ganador');
-    var mensajeH2 = document.getElementById('mensaje-ganador');
 
     if (ganador) {
+        // Determinar quién ganó
+        var esJugador1 = (ganador === simbolos[setImagenes].jugador1);
+        var nombreGanador = esJugador1 ? nombreJugador1 : nombreJugador2;
+        
+        // Actualizar estadísticas
+        if (esJugador1) {
+            estadisticas.victoriasJ1++;
+            document.getElementById('victoriasJ1').textContent = estadisticas.victoriasJ1;
+        } else {
+            estadisticas.victoriasJ2++;
+            document.getElementById('victoriasJ2').textContent = estadisticas.victoriasJ2;
+        }
+        
         // Hay ganador
-        mensajeH2.textContent = '¡Ganador: ' + ganador + '! :3';
+        mensajeTexto.textContent = '¡Ganador: ' + nombreGanador + '! :3';
 
         // Dibujar línea ganadora
         if (combinacionGanadora) {
@@ -120,7 +241,9 @@ function finalizarJuego(ganador, combinacionGanadora) {
         }
     } else {
         // Empate
-        mensajeH2.textContent = '¡Empate! ☆';
+        estadisticas.empates++;
+        document.getElementById('empates').textContent = estadisticas.empates;
+        mensajeTexto.textContent = '¡Empate! ☆';
     }
 
     // Mostrar modal
@@ -197,7 +320,7 @@ function reiniciarJuego() {
     tablero = ['', '', '', '', '', '', '', '', ''];
     juegoActivo = true;
     tiempoInicio = null;
-    tiempoRestante = 180;
+    tiempoRestante = tiempoLimite;
 
     // Detener y reiniciar temporizador
     detenerTemporizador();
@@ -216,16 +339,38 @@ function reiniciarJuego() {
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Ocultar modal de ganador
-    var modal = document.getElementById('modal-ganador');
-    modal.classList.remove('mostrar');
+    // Restablecer colores a valores por defecto
+    document.getElementById('colorCelda1').value = COLORES_DEFAULT.celda1;
+    document.getElementById('colorCelda2').value = COLORES_DEFAULT.celda2;
+    
+    // Restablecer set de imágenes a Set 1
+    setImagenes = 1;
+    document.querySelector('input[name="imageSet"][value="1"]').checked = true;
 
-    // Recargar colores de celdas
+    // Aplicar colores por defecto
     actualizarColoresCeldas();
 }
 
 // ═══════════════════════════════════════════════════════
-// TEMPORIZADOR
+// FUNCIÓN PARA REINICIAR DESDE EL MODAL
+// ═══════════════════════════════════════════════════════
+
+function reiniciarDesdeModal() {
+    cerrarModal();
+    reiniciarJuego();
+}
+
+// ═══════════════════════════════════════════════════════
+// FUNCIÓN PARA CERRAR EL MODAL
+// ═══════════════════════════════════════════════════════
+
+function cerrarModal() {
+    var modal = document.getElementById('modal-ganador');
+    modal.classList.remove('mostrar');
+}
+
+// ═══════════════════════════════════════════════════════
+// TEMPORIZADOR (CONTADOR REGRESIVO)
 // ═══════════════════════════════════════════════════════
 
 function iniciarTemporizador() {
@@ -235,13 +380,14 @@ function iniciarTemporizador() {
         var tiempoTranscurrido = Math.floor((Date.now() - tiempoInicio) / 1000);
         tiempoRestante = tiempoLimite - tiempoTranscurrido;
         
+        // Asegurar que no sea negativo
         if (tiempoRestante < 0) {
             tiempoRestante = 0;
         }
         
         actualizarDisplayTimer();
 
-        // Verificar si se acabó el tiempo (0 segundos)
+        // Verificar si se acabó el tiempo
         if (tiempoRestante <= 0) {
             tiempoAgotado();
         }
@@ -256,6 +402,11 @@ function detenerTemporizador() {
 }
 
 function actualizarDisplayTimer() {
+    if (tiempoLimite === 0) {
+        document.getElementById('timer').textContent = '∞';
+        return;
+    }
+    
     var minutos = Math.floor(tiempoRestante / 60);
     var segundos = tiempoRestante % 60;
     
@@ -267,9 +418,14 @@ function tiempoAgotado() {
     detenerTemporizador();
     juegoActivo = false;
     
+    // Actualizar empates
+    estadisticas.empates++;
+    document.getElementById('empates').textContent = estadisticas.empates;
+    
+    var mensajeTexto = document.getElementById('mensaje-ganador');
     var modal = document.getElementById('modal-ganador');
-    var mensajeH2 = document.getElementById('mensaje-ganador');
-    mensajeH2.textContent = '¡Tiempo agotado! Sin ganador ⏱️';
+    
+    mensajeTexto.textContent = '¡Tiempo agotado! Sin ganador ⏱️';
     modal.classList.add('mostrar');
     
     deshabilitarTablero();
@@ -299,7 +455,7 @@ function cambiarImagenes(set) {
 }
 
 // ═══════════════════════════════════════════════════════
-// FUNCIÓN PARA ACTUALIZAR COLORES DE CELDAS
+// FUNCIÓN PARA ACTUALIZAR COLORES DE CELDAS EN TIEMPO REAL
 // ═══════════════════════════════════════════════════════
 
 function actualizarColoresCeldas() {
@@ -348,17 +504,70 @@ function toggleLineas() {
 }
 
 // ═══════════════════════════════════════════════════════
-// FUNCIONES DEL MODAL
+// FUNCIÓN PARA CAMBIAR MODO DE JUEGO
 // ═══════════════════════════════════════════════════════
 
-function cerrarModal() {
-    var modal = document.getElementById('modal-ganador');
-    modal.classList.remove('mostrar');
+function cambiarModoJuego(modo) {
+    modoJuego = modo;
+    
+    // Actualizar etiqueta del jugador 2
+    var labelJ2 = document.getElementById('labelJugador2');
+    if (modo === 'vsComputadora') {
+        labelJ2.textContent = 'Computadora';
+        nombreJugador2 = 'Computadora';
+    } else {
+        labelJ2.textContent = document.getElementById('nombreJugador2').value || 'Jugador 2';
+        nombreJugador2 = document.getElementById('nombreJugador2').value || 'Jugador 2';
+    }
 }
 
-function reiniciarDesdeModal() {
-    cerrarModal();
-    reiniciarJuego();
+// ═══════════════════════════════════════════════════════
+// FUNCIÓN PARA ACTUALIZAR NOMBRES DE JUGADORES
+// ═══════════════════════════════════════════════════════
+
+function actualizarNombres() {
+    var inputJ1 = document.getElementById('nombreJugador1').value;
+    var inputJ2 = document.getElementById('nombreJugador2').value;
+    
+    nombreJugador1 = inputJ1 || 'Jugador 1';
+    nombreJugador2 = inputJ2 || 'Jugador 2';
+    
+    // Actualizar labels en el contador
+    document.getElementById('labelJugador1').textContent = nombreJugador1;
+    
+    if (modoJuego === '2jugadores') {
+        document.getElementById('labelJugador2').textContent = nombreJugador2;
+    }
+}
+
+// ═══════════════════════════════════════════════════════
+// FUNCIÓN PARA CAMBIAR TIEMPO LÍMITE
+// ═══════════════════════════════════════════════════════
+
+function cambiarTiempoLimite(nuevoTiempo) {
+    tiempoLimite = nuevoTiempo;
+    tiempoRestante = nuevoTiempo;
+    
+    // Detener temporizador si está corriendo
+    detenerTemporizador();
+    tiempoInicio = null;
+    
+    // Actualizar display
+    actualizarDisplayTimer();
+}
+
+// ═══════════════════════════════════════════════════════
+// FUNCIÓN PARA RESETEAR ESTADÍSTICAS
+// ═══════════════════════════════════════════════════════
+
+function resetearEstadisticas() {
+    estadisticas.victoriasJ1 = 0;
+    estadisticas.victoriasJ2 = 0;
+    estadisticas.empates = 0;
+    
+    document.getElementById('victoriasJ1').textContent = '0';
+    document.getElementById('victoriasJ2').textContent = '0';
+    document.getElementById('empates').textContent = '0';
 }
 
 // ═══════════════════════════════════════════════════════

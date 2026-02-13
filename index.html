@@ -8,15 +8,9 @@
     <link rel="stylesheet" href="CSS/styles.css">
     <script src="JS/functions.js" defer></script>
     <link rel="shortcut icon" href="img/tictactoe.ico" />
-
-
 </head>
 
 <body>
-    <div class="timer-container">
-        <p><strong>⏱️ Tiempo:</strong> <span id="timer">3:00</span></p>
-    </div>
-
     <h1>₊ ‧ . ° . ⋆ TIC TAC TOE ⋆ . ° . ₊</h1>
 
     <div class="container">
@@ -25,68 +19,118 @@
         <div class="panel">
             <!-- Columna 1 -->
             <div class="panel-column">
-                <p><strong>☆ SELECCIONA TUS SÍMBOLOS</strong></p>
+                <p><strong>☆ NOMBRES DE JUGADORES</strong></p>
+                <input type="text" id="nombreJugador1" placeholder="Jugador 1" maxlength="15" oninput="actualizarNombres()">
+                <input type="text" id="nombreJugador2" placeholder="Jugador 2" maxlength="15" oninput="actualizarNombres()">
 
+                <p><strong>☆ MODO DE JUEGO</strong></p>
                 <label>
-                    <input type="radio" name="imageSet" value="1" checked onchange="cambiarImagenes(1)">
-                    Set 1: X y O
+                    <input type="radio" name="modoJuego" value="2jugadores" checked onchange="cambiarModoJuego('2jugadores')">
+                    2 Jugadores
+                </label>
+                <label>
+                    <input type="radio" name="modoJuego" value="vsComputadora" onchange="cambiarModoJuego('vsComputadora')">
+                    Vs Computadora
                 </label>
 
+                <p><strong>☆ SELECTOR DE TIEMPO</strong></p>
                 <label>
-                    <input type="radio" name="imageSet" value="2" onchange="cambiarImagenes(2)">
-                    Set 2: ★ y ☆
+                    <input type="radio" name="tiempoLimite" value="60" onchange="cambiarTiempoLimite(60)">
+                    Rápido (1 min)
                 </label>
-
                 <label>
-                    <input type="radio" name="imageSet" value="3" onchange="cambiarImagenes(3)">
-                    Set 3: 🍒 y 🍰
+                    <input type="radio" name="tiempoLimite" value="180" checked onchange="cambiarTiempoLimite(180)">
+                    Normal (3 min)
                 </label>
-
-                <br>
-                <p><strong>☆ COLORES DE CELDAS</strong></p>
-                <p>Color de celda 1:</p>
-                <input type="color" id="colorCelda1" value="#ffe8ed" onchange="actualizarColoresCeldas()">
-                <p>Color de celda 2:</p>
-                <input type="color" id="colorCelda2" value="#fff5f7" onchange="actualizarColoresCeldas()">
-            </div>
-
-            <!-- Columna 2 -->
-            <div class="panel-column">
+                <label>
+                    <input type="radio" name="tiempoLimite" value="300" onchange="cambiarTiempoLimite(300)">
+                    Relajado (5 min)
+                </label>
+                <label>
+                    <input type="radio" name="tiempoLimite" value="0" onchange="cambiarTiempoLimite(0)">
+                    Sin límite
+                </label>
                 <p><strong>☆ LÍNEAS INTERMEDIAS</strong></p>
                 <label>
                     <input type="checkbox" id="mostrarLineas" checked onchange="toggleLineas()">
                     Mostrar líneas
                 </label>
+            </div>
 
-                <br>
+            <!-- Columna 2 -->
+            <div class="panel-column">
+                <p><strong>☆ SELECCIONA TUS SÍMBOLOS</strong></p>
+                <label>
+                    <input type="radio" name="imageSet" value="1" checked onchange="cambiarImagenes(1)">
+                    Set 1: X y O
+                </label>
+                <label>
+                    <input type="radio" name="imageSet" value="2" onchange="cambiarImagenes(2)">
+                    Set 2: ★ y ☆
+                </label>
+                <label>
+                    <input type="radio" name="imageSet" value="3" onchange="cambiarImagenes(3)">
+                    Set 3: 🍒 y 🍰
+                </label>
+
+                <p><strong>☆ COLORES DE CELDAS</strong></p>
+                <p>Color de celda 1:</p>
+                <input type="color" id="colorCelda1" value="#ffe8ed" oninput="actualizarColoresCeldas()">
+                <p>Color de celda 2:</p>
+                <input type="color" id="colorCelda2" value="#fff5f7" oninput="actualizarColoresCeldas()">
+
                 <p><strong>☆ COLOR LÍNEA GANADORA</strong></p>
                 <input type="color" id="colorLineaGanadora" value="#ff1493">
 
-                <br>
                 <button onclick="reiniciarJuego()">★ Reiniciar Juego ★</button>
             </div>
         </div>
 
-        <!-- Tablero -->
-        <div class="board-container">
-            <table class="tablero">
-                <tr>
-                    <td onclick="cellClick(this, 0)"></td>
-                    <td onclick="cellClick(this, 1)"></td>
-                    <td onclick="cellClick(this, 2)"></td>
-                </tr>
-                <tr>
-                    <td onclick="cellClick(this, 3)"></td>
-                    <td onclick="cellClick(this, 4)"></td>
-                    <td onclick="cellClick(this, 5)"></td>
-                </tr>
-                <tr>
-                    <td onclick="cellClick(this, 6)"></td>
-                    <td onclick="cellClick(this, 7)"></td>
-                    <td onclick="cellClick(this, 8)"></td>
-                </tr>
-            </table>
-            <canvas id="lineCanvas" class="line-canvas"></canvas>
+        <!-- Sección derecha: Timer + Tablero -->
+        <div class="board-section">
+            <!-- Contador de victorias -->
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-label" id="labelJugador1">Jugador 1</span>
+                    <span class="stat-value" id="victoriasJ1">0</span>
+                </div>
+                <div class="stat-item empates">
+                    <span class="stat-label">Empates</span>
+                    <span class="stat-value" id="empates">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label" id="labelJugador2">Jugador 2</span>
+                    <span class="stat-value" id="victoriasJ2">0</span>
+                </div>
+                <button class="btn-reset-stats" onclick="resetearEstadisticas()">↻ Resetear</button>
+            </div>
+
+            <!-- Temporizador -->
+            <div class="timer-container">
+                <p><strong>⏱️ Tiempo:</strong> <span id="timer">3:00</span></p>
+            </div>
+
+            <!-- Tablero -->
+            <div class="board-container">
+                <table class="tablero">
+                    <tr>
+                        <td onclick="cellClick(this, 0)"></td>
+                        <td onclick="cellClick(this, 1)"></td>
+                        <td onclick="cellClick(this, 2)"></td>
+                    </tr>
+                    <tr>
+                        <td onclick="cellClick(this, 3)"></td>
+                        <td onclick="cellClick(this, 4)"></td>
+                        <td onclick="cellClick(this, 5)"></td>
+                    </tr>
+                    <tr>
+                        <td onclick="cellClick(this, 6)"></td>
+                        <td onclick="cellClick(this, 7)"></td>
+                        <td onclick="cellClick(this, 8)"></td>
+                    </tr>
+                </table>
+                <canvas id="lineCanvas" class="line-canvas"></canvas>
+            </div>
         </div>
 
     </div>
